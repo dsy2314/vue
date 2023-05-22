@@ -49,6 +49,9 @@ export function updateComponentListeners (
   target = undefined
 }
 
+/**
+ * Vue 原型挂载方法：$on, $once, $off, $emit
+ */
 export function eventsMixin (Vue: Class<Component>) {
   const hookRE = /^hook:/
   Vue.prototype.$on = function (event: string | Array<string>, fn: Function): Component {

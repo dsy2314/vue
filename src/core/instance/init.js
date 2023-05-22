@@ -12,6 +12,10 @@ import { extend, mergeOptions, formatComponentName } from '../util/index'
 
 let uid = 0
 
+/**
+ * Vue 原型挂载方法： _init
+ * _init 主要功能：options 合并，
+ */
 export function initMixin (Vue: Class<Component>) {
   Vue.prototype._init = function (options?: Object) {
     const vm: Component = this
@@ -49,13 +53,39 @@ export function initMixin (Vue: Class<Component>) {
     }
     // expose real self
     vm._self = vm
+    /**
+     * vm 添加属性：$parent, $root, $children, $refs, _watcher, _inactive, _directInactive, _isMounted, _isDestroyed, _isBeingDestroyed
+     * 如果 vm 存在父级非抽象组件，将 vm 添加到其 $children 中
+     */
     initLifecycle(vm)
+    /**
+     * vm 添加属性：_events, _hasHookEvent
+     * 如果 vm 存在父级附加的事件，将其添加到 vm 中
+     */
     initEvents(vm)
+    /**
+     * vm 添加属性：_vnode, _staticTrees, $slots, $scopedSlots, _c, $createElement, $attrs, $listeners
+     */
     initRender(vm)
+    /**
+     * 触发 beforeCreate 钩子函数
+     */
     callHook(vm, 'beforeCreate')
+    /**
+     * 初始化 inject
+     */
     initInjections(vm) // resolve injections before data/props
+    /**
+     * 初始化 props, methods, data, computed, watch
+     */
     initState(vm)
+    /**
+     * 初始化 provide
+     */
     initProvide(vm) // resolve provide after data/props
+    /**
+     * 触发 created 钩子函数
+     */
     callHook(vm, 'created')
 
     /* istanbul ignore if */

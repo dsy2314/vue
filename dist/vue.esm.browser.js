@@ -588,7 +588,7 @@ if (typeof Set !== 'undefined' && isNative(Set)) {
 } else {
   // a non-standard Set polyfill that only works with primitive keys.
   _Set = class Set   {
-    
+
     constructor () {
       this.set = Object.create(null);
     }
@@ -711,9 +711,9 @@ let uid = 0;
  * directives subscribing to it.
  */
 class Dep {
-  
-  
-  
+
+
+
 
   constructor () {
     this.id = uid++;
@@ -768,15 +768,15 @@ function popTarget () {
 /*  */
 
 class VNode {
-  
-  
-  
-  
-  
-  
+
+
+
+
+
+
    // rendered in this component's scope
-  
-  
+
+
    // component instance
    // component placeholder node
 
@@ -788,9 +788,9 @@ class VNode {
    // is a cloned node?
    // is a v-once node?
    // async component factory function
-  
-  
-  
+
+
+
    // real context vm for functional nodes
    // for SSR caching
    // used to store functional render context for devtools
@@ -944,8 +944,8 @@ function toggleObserving (value) {
  * collect dependencies and dispatch updates.
  */
 class Observer {
-  
-  
+
+
    // number of vms that have this object as root $data
 
   constructor (value) {
@@ -4450,23 +4450,23 @@ let uid$2 = 0;
  * This is used for both the $watch() api and directives.
  */
 class Watcher {
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   constructor (
     vm,
@@ -5124,6 +5124,7 @@ function Vue (options) {
   ) {
     warn('Vue is a constructor and should be called with the `new` keyword');
   }
+
   this._init(options);
 }
 
@@ -10976,15 +10977,15 @@ var baseDirectives = {
 
 
 class CodegenState {
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
+
+
+
+
+
 
   constructor (options) {
     this.options = options;

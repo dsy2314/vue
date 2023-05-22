@@ -62,7 +62,11 @@ export function initState (vm: Component) {
   }
 }
 
+/**
+ * 初始化 props
+ */
 function initProps (vm: Component, propsOptions: Object) {
+  /** vm.$options.propsData 结束来自父级的属性 **/
   const propsData = vm.$options.propsData || {}
   const props = vm._props = {}
   // cache prop keys so that future props updates can iterate using Array
@@ -110,6 +114,9 @@ function initProps (vm: Component, propsOptions: Object) {
   toggleObserving(true)
 }
 
+/**
+ * 初始化 data
+ */
 function initData (vm: Component) {
   let data = vm.$options.data
   data = vm._data = typeof data === 'function'
@@ -167,6 +174,9 @@ export function getData (data: Function, vm: Component): any {
 
 const computedWatcherOptions = { lazy: true }
 
+/**
+ * 初始化 Computed
+ */
 function initComputed (vm: Component, computed: Object) {
   // $flow-disable-line
   const watchers = vm._computedWatchers = Object.create(null)
@@ -319,6 +329,10 @@ function createWatcher (
   return vm.$watch(expOrFn, handler, options)
 }
 
+/**
+ * Vue 原型挂载方法：$delete, $set, $watch,
+ *     挂载属性：$data, $props
+ */
 export function stateMixin (Vue: Class<Component>) {
   // flow somehow has problems with directly declared definition object
   // when using Object.defineProperty, so we have to procedurally build up

@@ -55,6 +55,9 @@ export function initLifecycle (vm: Component) {
   vm._isBeingDestroyed = false
 }
 
+/**
+ * Vue 原型挂载方法：_update, $forceUpdate, $destroy
+ */
 export function lifecycleMixin (Vue: Class<Component>) {
   Vue.prototype._update = function (vnode: VNode, hydrating?: boolean) {
     const vm: Component = this
@@ -191,6 +194,7 @@ export function mountComponent (
     }
   }
 
+  /** 初始化和 vm 实例中的监测的数据发生变化时都会执行回调函数 updateComponent **/
   // we set this to vm._watcher inside the watcher's constructor
   // since the watcher's initial patch may call $forceUpdate (e.g. inside child
   // component's mounted hook), which relies on vm._watcher being already defined
