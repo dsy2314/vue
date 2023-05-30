@@ -1,6 +1,6 @@
 /*!
  * Vue.js v2.6.14
- * (c) 2014-2021 Evan You
+ * (c) 2014-2023 Evan You
  * Released under the MIT License.
  */
 (function (global, factory) {
@@ -46,7 +46,7 @@
 
   /**
    * Quick object check - this is primarily used to tell
-   * Objects from primitive values when we know the value
+   * objects from primitive values when we know the value
    * is a JSON-compliant type.
    */
   function isObject (obj) {
@@ -2058,7 +2058,7 @@
         'referenced during render. Make sure that this property is reactive, ' +
         'either in the data option, or for class-based components, by ' +
         'initializing the property. ' +
-        'See: https://vuejs.org/v2/guide/reactivity.html#Declaring-Reactive-Properties.',
+        'See: https://v2.vuejs.org/v2/guide/reactivity.html#Declaring-Reactive-Properties',
         target
       );
     };
@@ -2068,7 +2068,7 @@
         "Property \"" + key + "\" must be accessed with \"$data." + key + "\" because " +
         'properties starting with "$" or "_" are not proxied in the Vue instance to ' +
         'prevent conflicts with Vue internals. ' +
-        'See: https://vuejs.org/v2/api/#data',
+        'See: https://v2.vuejs.org/v2/api/#data',
         target
       );
     };
@@ -3200,7 +3200,7 @@
     tag
   ) {
     if (isUndef(Ctor)) {
-      return
+     return
     }
 
     var baseCtor = context.$options._base;
@@ -3537,6 +3537,9 @@
 
   var currentRenderingInstance = null;
 
+  /**
+   * Vue 原型挂载方法：$nextTick, _render, 一些渲染辅助方法 _b 等
+   */
   function renderMixin (Vue) {
     // install runtime convenience helpers
     installRenderHelpers(Vue.prototype);
@@ -3545,6 +3548,7 @@
       return nextTick(fn, this)
     };
 
+    /** 把实例渲染成 vnode **/
     Vue.prototype._render = function () {
       var vm = this;
       var ref = vm.$options;
@@ -3815,6 +3819,9 @@
     target = undefined;
   }
 
+  /**
+   * Vue 原型挂载方法：$on, $once, $off, $emit
+   */
   function eventsMixin (Vue) {
     var hookRE = /^hook:/;
     Vue.prototype.$on = function (event, fn) {
@@ -3947,8 +3954,12 @@
     vm._isBeingDestroyed = false;
   }
 
+  /**
+   * Vue 原型挂载方法：_update, $forceUpdate, $destroy
+   */
   function lifecycleMixin (Vue) {
     Vue.prototype._update = function (vnode, hydrating) {
+      console.log(vnode);
       var vm = this;
       var prevEl = vm.$el;
       var prevVnode = vm._vnode;
@@ -4078,11 +4089,18 @@
         measure(("vue " + name + " patch"), startTag, endTag);
       };
     } else {
+      /**
+       * _render 函数时会获取使用到的属性值，触发依赖收集
+       * _update 根据 Diff 算法比较两次的 VNode 差异进行最小化更新
+       */
       updateComponent = function () {
         vm._update(vm._render(), hydrating);
       };
     }
 
+    /**
+     * 实例化 Watcher 时 执行 updateComponent 触发依赖收集，之后当依赖的属性发生变化时，重新执行 updateComponent
+     */
     // we set this to vm._watcher inside the watcher's constructor
     // since the watcher's initial patch may call $forceUpdate (e.g. inside child
     // component's mounted hook), which relies on vm._watcher being already defined
@@ -4661,7 +4679,11 @@
     }
   }
 
+  /**
+   * 初始化 props
+   */
   function initProps (vm, propsOptions) {
+    /** vm.$options.propsData 结束来自父级的属性 **/
     var propsData = vm.$options.propsData || {};
     var props = vm._props = {};
     // cache prop keys so that future props updates can iterate using Array
@@ -4709,6 +4731,9 @@
     toggleObserving(true);
   }
 
+  /**
+   * 初始化 data
+   */
   function initData (vm) {
     var data = vm.$options.data;
     data = vm._data = typeof data === 'function'
@@ -4718,7 +4743,7 @@
       data = {};
       warn(
         'data functions should return an object:\n' +
-        'https://vuejs.org/v2/guide/components.html#data-Must-Be-a-Function',
+        'https://v2.vuejs.org/v2/guide/components.html#data-Must-Be-a-Function',
         vm
       );
     }
@@ -4766,6 +4791,9 @@
 
   var computedWatcherOptions = { lazy: true };
 
+  /**
+   * 初始化 Computed
+   */
   function initComputed (vm, computed) {
     // $flow-disable-line
     var watchers = vm._computedWatchers = Object.create(null);
@@ -4917,6 +4945,10 @@
     return vm.$watch(expOrFn, handler, options)
   }
 
+  /**
+   * Vue 原型挂载方法：$delete, $set, $watch,
+   *     挂载属性：$data, $props
+   */
   function stateMixin (Vue) {
     // flow somehow has problems with directly declared definition object
     // when using Object.defineProperty, so we have to procedurally build up
@@ -4971,6 +5003,10 @@
 
   var uid$3 = 0;
 
+  /**
+   * Vue 原型挂载方法： _init
+   * _init 主要功能：options 合并，
+   */
   function initMixin (Vue) {
     Vue.prototype._init = function (options) {
       var vm = this;
@@ -5006,13 +5042,39 @@
       }
       // expose real self
       vm._self = vm;
+      /**
+       * vm 添加属性：$parent, $root, $children, $refs, _watcher, _inactive, _directInactive, _isMounted, _isDestroyed, _isBeingDestroyed
+       * 如果 vm 存在父级非抽象组件，将 vm 添加到其 $children 中
+       */
       initLifecycle(vm);
+      /**
+       * vm 添加属性：_events, _hasHookEvent
+       * 如果 vm 存在父级附加的事件，将其添加到 vm 中
+       */
       initEvents(vm);
+      /**
+       * vm 添加属性：_vnode, _staticTrees, $slots, $scopedSlots, _c, $createElement, $attrs, $listeners
+       */
       initRender(vm);
+      /**
+       * 触发 beforeCreate 钩子函数
+       */
       callHook(vm, 'beforeCreate');
+      /**
+       * 初始化 inject
+       */
       initInjections(vm); // resolve injections before data/props
+      /**
+       * 初始化 props, methods, data, computed, watch
+       */
       initState(vm);
+      /**
+       * 初始化 provide
+       */
       initProvide(vm); // resolve provide after data/props
+      /**
+       * 触发 created 钩子函数
+       */
       callHook(vm, 'created');
 
       /* istanbul ignore if */
@@ -5084,6 +5146,10 @@
     return modified
   }
 
+  /**
+   * 通过 ES5 Function 构造函数 Vue
+   * 原型挂载方法： _init
+   */
   function Vue (options) {
     if (!(this instanceof Vue)
     ) {
@@ -5092,10 +5158,26 @@
     this._init(options);
   }
 
+  /**
+   * Vue 原型挂载方法： _init
+   */
   initMixin(Vue);
+  /**
+   * Vue 原型挂载方法：$delete, $set, $watch,
+   *     挂载属性：$data, $props
+   */
   stateMixin(Vue);
+  /**
+   * Vue 原型挂载方法：$on, $once, $off, $emit
+   */
   eventsMixin(Vue);
+  /**
+   * Vue 原型挂载方法：_update, $forceUpdate, $destroy
+   */
   lifecycleMixin(Vue);
+  /**
+   * Vue 原型挂载方法：$nextTick, _render, 一些渲染辅助方法 _b, _d 等
+   */
   renderMixin(Vue);
 
   /*  */
@@ -7620,7 +7702,9 @@
     }
     var on = vnode.data.on || {};
     var oldOn = oldVnode.data.on || {};
-    target$1 = vnode.elm;
+    // vnode is empty when removing all listeners,
+    // and use old vnode dom element
+    target$1 = vnode.elm || oldVnode.elm;
     normalizeEvents(on);
     updateListeners(on, oldOn, add$1, remove$2, createOnceHandler$1, vnode.context);
     target$1 = undefined;
@@ -7628,7 +7712,8 @@
 
   var events = {
     create: updateDOMListeners,
-    update: updateDOMListeners
+    update: updateDOMListeners,
+    destroy: function (vnode) { return updateDOMListeners(vnode, emptyNode); }
   };
 
   /*  */
@@ -9108,7 +9193,7 @@
         console[console.info ? 'info' : 'log'](
           "You are running Vue in development mode.\n" +
           "Make sure to turn on production mode when deploying for production.\n" +
-          "See more tips at https://vuejs.org/guide/deployment.html"
+          "See more tips at https://v2.vuejs.org/v2/guide/deployment.html"
         );
       }
     }, 0);
@@ -9180,7 +9265,7 @@
       }
     }
     if (staticClass) {
-      el.staticClass = JSON.stringify(staticClass);
+      el.staticClass = JSON.stringify(staticClass.replace(/\s+/g, ' ').trim());
     }
     var classBinding = getBindingAttr(el, 'class', false /* getStatic */);
     if (classBinding) {
@@ -11132,7 +11217,7 @@
       state.warn(
         "<" + (el.tag) + " v-for=\"" + alias + " in " + exp + "\">: component lists rendered with " +
         "v-for should have explicit keys. " +
-        "See https://vuejs.org/guide/list.html#key for more info.",
+        "See https://v2.vuejs.org/v2/guide/list.html#Maintaining-State for more info.",
         el.rawAttrsMap['v-for'],
         true /* tip */
       );

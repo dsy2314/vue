@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<div id="app"></div>
+
+<script src="../../dist/vue.js"></script>
+<script type="module">
+Vue.component('ChildComp', {
+  template: `<div>I'm child, {{msg}}!</div>`,
+  data() {
+    return {
+      msg: 'hhhh'
+    }
+  }
+});
+
+const vm = new Vue({
+  el: "#app",
+  template: `<div><h1>{{msg}}</h1><ChildComp/></div>`,
+  data() {
+    return {
+      msg: "HELLO VUE",
+    }
+  },
+});
+</script>
+</body>
+</html>

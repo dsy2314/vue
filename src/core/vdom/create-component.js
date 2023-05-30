@@ -106,7 +106,7 @@ export function createComponent (
   tag?: string
 ): VNode | Array<VNode> | void {
   if (isUndef(Ctor)) {
-    return
+   return
   }
 
   const baseCtor = context.$options._base
