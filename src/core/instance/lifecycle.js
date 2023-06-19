@@ -60,6 +60,7 @@ export function initLifecycle (vm: Component) {
  */
 export function lifecycleMixin (Vue: Class<Component>) {
   Vue.prototype._update = function (vnode: VNode, hydrating?: boolean) {
+    console.log(vnode)
     const vm: Component = this
     const prevEl = vm.$el
     const prevVnode = vm._vnode
@@ -189,12 +190,18 @@ export function mountComponent (
       measure(`vue ${name} patch`, startTag, endTag)
     }
   } else {
+    /**
+     * _render 函数时会获取使用到的属性值，触发依赖收集
+     * _update 根据 Diff 算法比较两次的 VNode 差异进行最小化更新
+     */
     updateComponent = () => {
       vm._update(vm._render(), hydrating)
     }
   }
 
-  /** 初始化和 vm 实例中的监测的数据发生变化时都会执行回调函数 updateComponent **/
+  /**
+   * 实例化 Watcher 时 执行 updateComponent 触发依赖收集，之后当依赖的属性发生变化时，重新执行 updateComponent
+   */
   // we set this to vm._watcher inside the watcher's constructor
   // since the watcher's initial patch may call $forceUpdate (e.g. inside child
   // component's mounted hook), which relies on vm._watcher being already defined
